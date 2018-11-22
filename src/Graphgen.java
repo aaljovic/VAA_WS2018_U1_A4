@@ -6,13 +6,13 @@ import java.util.Random;
 
 public class Graphgen
 {
-    private int knoten;
-    private int nachbar;
+    private int node;
+    private int neighbour;
 
     public Graphgen(int knoten, int nachbar)
     {
-        this.knoten = knoten;
-        this.nachbar = nachbar;
+        this.node = knoten;
+        this.neighbour = nachbar;
     }
 
     protected static void changeTextFile(int numberOfNodes)
@@ -71,7 +71,7 @@ public class Graphgen
 
     protected static Graphgen[] getNeighboursForGraph(int randomNumber, int numberOfNodes, int numberOfEdges)
     {
-        Graphgen[] neighbours = new Graphgen[10];
+        Graphgen[] neighbours = new Graphgen[numberOfEdges];
         Graphgen neighbour;
         for (int i=0; i<numberOfEdges; i++)
         {
@@ -79,7 +79,7 @@ public class Graphgen
             if (!checkNeighbourAlreadyExists(neighbours, neighbour))
             {
                 neighbours[i] = neighbour;
-                System.out.println(neighbours[i].knoten + " -- " + neighbours[i].nachbar);
+                System.out.println(neighbours[i].node + " -- " + neighbours[i].neighbour);
             }
             else
             {
@@ -95,20 +95,19 @@ public class Graphgen
         boolean exist = false;
         for (int i=0; i<neighbours.length; i++)
         {
-            System.out.println("neighbours[i].knoten " + neighbours[i].knoten);
-            System.out.println("neighbour.knoten " + neighbour.knoten);
-            if ((neighbours[i].knoten == neighbour.knoten) && (neighbours[i].nachbar == neighbour.nachbar))
+            System.out.println("neighbours[i].knoten " + neighbours[i].node);
+            System.out.println("neighbour.knoten " + neighbour.node);
+            if ((neighbours[i].node == neighbour.node) && (neighbours[i].neighbour == neighbour.neighbour))
             {
                 exist = true;
             }
-            else if ((neighbours[i].knoten == neighbour.nachbar) && (neighbours[i].nachbar == neighbour.knoten))
+            else if ((neighbours[i].node == neighbour.neighbour) && (neighbours[i].neighbour == neighbour.node))
             {
                 exist = true;
             }
         }
         return exist;
     }
-
 
     protected static boolean checkValueInArray(int[] array, int value)
     {

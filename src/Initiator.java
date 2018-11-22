@@ -7,7 +7,10 @@ public class Initiator
         int nodesAndEdges[] = checkInput();
         Graphgen.changeTextFile(nodesAndEdges[0]);
         //Graphgen neighbours = Graphgen.getNeighbourForGraph(Graphgen.getRandomNumber(nodesAndEdges[0]), nodesAndEdges[0]);
-        Graphgen.getNeighboursForGraph(Graphgen.getRandomNumber(nodesAndEdges[0]), nodesAndEdges[0], nodesAndEdges[1]);
+        int randomNumber = Graphgen.getRandomNumber(nodesAndEdges[0]);
+        Graphgen.getNeighboursForGraph(randomNumber, nodesAndEdges[0], nodesAndEdges[1]);
+
+        //Graphgen.getNeighboursForGraph(Graphgen.getRandomNumber(nodesAndEdges[0]), nodesAndEdges[0], nodesAndEdges[1]);
 
         while (true)
         {
