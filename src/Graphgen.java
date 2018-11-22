@@ -6,13 +6,13 @@ import java.util.Random;
 
 public class Graphgen
 {
-    private int node;
-    private int neighbour;
+    private int graphNode;
+    private int graphNeighbour;
 
-    public Graphgen(int knoten, int nachbar)
+    public Graphgen(int graphNode, int graphNeighbour)
     {
-        this.node = knoten;
-        this.neighbour = nachbar;
+        this.graphNode = graphNode;
+        this.graphNeighbour = graphNeighbour;
     }
 
     protected static void changeTextFile(int numberOfNodes)
@@ -72,19 +72,30 @@ public class Graphgen
     protected static Graphgen[] getNeighboursForGraph(int randomNumber, int numberOfNodes, int numberOfEdges)
     {
         Graphgen[] neighbours = new Graphgen[numberOfEdges];
-        Graphgen neighbour;
+        neighbours = Graphgen.initNeighbours(neighbours);
+        Graphgen neighbour = new Graphgen(-1, -1);
+
         for (int i=0; i<numberOfEdges; i++)
         {
             neighbour = Graphgen.getNeighbourForGraph(randomNumber, numberOfNodes);
             if (!checkNeighbourAlreadyExists(neighbours, neighbour))
             {
                 neighbours[i] = neighbour;
-                System.out.println(neighbours[i].node + " -- " + neighbours[i].neighbour);
+                System.out.println(neighbours[i].graphNode + " -- " + neighbours[i].graphNeighbour);
             }
             else
             {
-                i--;
+                //i--;
             }
+        }
+        return neighbours;
+    }
+
+    protected static Graphgen[] initNeighbours(Graphgen[] neighbours)
+    {
+        for (int i=0; i<neighbours.length; i++)
+        {
+            neighbours[i] = new Graphgen(-1, -1);
         }
         return neighbours;
     }
@@ -95,13 +106,13 @@ public class Graphgen
         boolean exist = false;
         for (int i=0; i<neighbours.length; i++)
         {
-            System.out.println("neighbours[i].knoten " + neighbours[i].node);
-            System.out.println("neighbour.knoten " + neighbour.node);
-            if ((neighbours[i].node == neighbour.node) && (neighbours[i].neighbour == neighbour.neighbour))
+            System.out.println("neighbours[i].knoten " + neighbours[i].graphNode);
+            System.out.println("neighbour.knoten " + neighbour.graphNode);
+            if ((neighbours[i].graphNode == neighbour.graphNode) && (neighbours[i].graphNeighbour == neighbour.graphNeighbour))
             {
                 exist = true;
             }
-            else if ((neighbours[i].node == neighbour.neighbour) && (neighbours[i].neighbour == neighbour.node))
+            else if ((neighbours[i].graphNode == neighbour.graphNeighbour) && (neighbours[i].graphNeighbour == neighbour.graphNode))
             {
                 exist = true;
             }

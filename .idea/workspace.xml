@@ -2,9 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="300b2678-5228-4bf1-ad04-6ac1b9282c90" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/inputFiles/inputTextFile" beforeDir="false" afterPath="$PROJECT_DIR$/inputFiles/inputTextFile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/VAA2018/Graphgen.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/VAA2018/Graphgen.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/VAA2018/Initiator.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/VAA2018/Initiator.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Graphgen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Graphgen.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Initiator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Initiator.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -147,12 +148,12 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="java" value="2961" />
+          <entry key="java" value="3287" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JAVA" value="2961" />
+          <entry key="JAVA" value="3287" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -186,8 +187,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Initiator.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="170">
-              <caret line="10" column="30" lean-forward="true" selection-start-line="10" selection-start-column="30" selection-end-line="10" selection-end-column="30" />
+            <state relative-caret-position="179">
+              <caret line="17" column="40" selection-start-line="17" selection-start-column="37" selection-end-line="17" selection-end-column="40" />
             </state>
           </provider>
         </entry>
@@ -195,8 +196,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Graphgen.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="272">
-              <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
+            <state relative-caret-position="264">
+              <caret line="109" column="74" lean-forward="true" selection-start-line="109" selection-start-column="74" selection-end-line="109" selection-end-column="74" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -218,7 +219,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>close</find>
       <find>false</find>
       <find>.close</find>
       <find>STOP</find>
@@ -227,7 +227,6 @@
       <find>stop</find>
       <find>Datei nicht gefunden</find>
       <find>Fehler</find>
-      <find>Sys</find>
       <find>THIS</find>
       <find>Nachr</find>
       <find>System.out</find>
@@ -248,6 +247,8 @@
       <find>changeTextFile</find>
       <find>read</find>
       <find>new</find>
+      <find>neighbours[i].knoten 3</find>
+      <find>Sys</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -267,7 +268,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-7" />
     <option name="width" value="974" />
     <option name="height" value="1047" />
@@ -325,7 +326,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1542901279862" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1542902426332" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="Artifacts" />
     <property name="project.structure.proportion" value="0.0" />
@@ -567,15 +568,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Initiator.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="10" column="30" lean-forward="true" selection-start-line="10" selection-start-column="30" selection-end-line="10" selection-end-column="30" />
+        <state relative-caret-position="179">
+          <caret line="17" column="40" selection-start-line="17" selection-start-column="37" selection-end-line="17" selection-end-column="40" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Graphgen.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
+        <state relative-caret-position="264">
+          <caret line="109" column="74" lean-forward="true" selection-start-line="109" selection-start-column="74" selection-end-line="109" selection-end-column="74" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
