@@ -41,7 +41,7 @@ public class Graphgen
             }
             bw.close();
             fw.close();
-            System.out.println(Constants.TEXT_FILE_MENU_END);
+            System.out.println(Constants.FILE_MENU_END);
 
         }
         catch (FileNotFoundException fnfe)
@@ -69,12 +69,32 @@ public class Graphgen
         return neighbours;
     }
 
+
     protected static Graphgen[] getNeighboursForGraph(int randomNumber, int numberOfNodes, int numberOfEdges)
     {
         Graphgen[] neighbours = new Graphgen[numberOfEdges];
         neighbours = Graphgen.initNeighbours(neighbours);
         Graphgen neighbour = new Graphgen(-1, -1);
+        int edges = 0;
 
+        while(true)
+        {
+            for (int i = 1; i <= numberOfNodes; i++)
+            {
+                int randomNode = getRandomNumber(i);
+                Graphgen edge = new Graphgen(i, randomNode);
+                if (!checkNeighbourAlreadyExists(neighbours, edge) && (edge.graphNode != edge.graphNeighbour))
+                {
+                    neighbours[edges] = edge;
+                    edges++;
+                }
+                if (edges == numberOfEdges)
+                {
+                    return neighbours;
+                }
+            }
+        }
+        /*
         for (int i=0; i<numberOfEdges; i++)
         {
             neighbour = Graphgen.getNeighbourForGraph(randomNumber, numberOfNodes);
@@ -85,10 +105,57 @@ public class Graphgen
             }
             else
             {
+                System.out.println("Already exist?");
                 //i--;
             }
         }
-        return neighbours;
+        */
+        //return neighbours;
+    }
+
+    protected static void changeGraphFile(int numberOfEdges, Graphgen[] allNeighbours)
+    {
+        try
+        {
+            FileWriter fw = new FileWriter(Constants.GRAPH_FILE_NAME);
+            BufferedWriter bw = new BufferedWriter(fw);
+            int port = 0;
+            String zeile = "";
+            System.out.println(Constants.GRAPH_FILE_MENU_START);
+            System.out.println("graph G {");
+            bw.write("graph G {");
+            bw.newLine();
+            for (int i=0; i<numberOfEdges; i++)
+            {
+                zeile = allNeighbours[i].graphNode + " -- " + allNeighbours[i].graphNeighbour;
+                try
+                {
+                    System.out.println(zeile);
+                    bw.write(zeile);
+                    bw.newLine();
+                }
+                catch (IOException ioe)
+                {
+                    System.out.println("Datei wird nicht korrekt eingelesen " + ioe);
+                }
+            }
+            System.out.println("}");
+            bw.write("}");
+            bw.newLine();
+
+            bw.close();
+            fw.close();
+            System.out.println(Constants.FILE_MENU_END);
+
+        }
+        catch (FileNotFoundException fnfe)
+        {
+            System.err.println(Constants.FILE_NOT_FOUND_ERROR + fnfe);
+        }
+        catch (IOException ioe)
+        {
+            System.err.println(Constants.INPUT_OUTPUT_ERROR + ioe);
+        }
     }
 
     protected static Graphgen[] initNeighbours(Graphgen[] neighbours)
@@ -102,12 +169,9 @@ public class Graphgen
 
     protected static boolean checkNeighbourAlreadyExists(Graphgen[] neighbours, Graphgen neighbour)
     {
-        System.out.println(neighbours.length);
         boolean exist = false;
         for (int i=0; i<neighbours.length; i++)
         {
-            System.out.println("neighbours[i].knoten " + neighbours[i].graphNode);
-            System.out.println("neighbour.knoten " + neighbour.graphNode);
             if ((neighbours[i].graphNode == neighbour.graphNode) && (neighbours[i].graphNeighbour == neighbour.graphNeighbour))
             {
                 exist = true;

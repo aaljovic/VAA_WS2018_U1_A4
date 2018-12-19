@@ -1,3 +1,6 @@
+import org.json.*;
+
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Initiator
@@ -6,11 +9,20 @@ public class Initiator
     {
         int nodesAndEdges[] = checkInput();
         Graphgen.changeTextFile(nodesAndEdges[0]);
-        //Graphgen neighbours = Graphgen.getNeighbourForGraph(Graphgen.getRandomNumber(nodesAndEdges[0]), nodesAndEdges[0]);
         int randomNumber = Graphgen.getRandomNumber(nodesAndEdges[0]);
-        Graphgen.getNeighboursForGraph(randomNumber, nodesAndEdges[0], nodesAndEdges[1]);
+        Graphgen[] allNeighbours = Graphgen.getNeighboursForGraph(randomNumber, nodesAndEdges[0], nodesAndEdges[1]);
+        Graphgen.changeGraphFile(nodesAndEdges[1], allNeighbours);
+        /*
+        try
+        {
+            Runtime.getRuntime().exec(new String[]{"cmd.exe", "/c", "startNodes.bat"});
+        }
+        catch(IOException io)
+        {
+            System.err.println(Constants.INPUT_OUTPUT_ERROR);
+        }
+        */
 
-        //Graphgen.getNeighboursForGraph(Graphgen.getRandomNumber(nodesAndEdges[0]), nodesAndEdges[0], nodesAndEdges[1]);
 
         while (true)
         {
@@ -21,16 +33,13 @@ public class Initiator
             switch (input)
             {
                 case "1":
-                    sendMessageTo();
+                    tellASecretTo();
                     break;
                 case "2":
                     closeNode();
                     break;
                 case "3":
                     closeAllNodes();
-                    break;
-                case "4":
-
                     break;
                 default:
                     System.out.println("Eingabe unzutreffend");
@@ -51,6 +60,16 @@ public class Initiator
             System.out.println("Anzahl der Kanten muss größer sein als Anzahl der Knoten.");
             checkInput();
         }
+        else if (numberOfEdges > ((numberOfNodes*(numberOfNodes-1))/2))
+        {
+            System.out.println("Anzahl der Kanten ist zu hoch. (Höher als  (n*(n-1))/2 )");
+            checkInput();
+        }
+        else if (numberOfNodes < 3)
+        {
+            System.out.println("Anzahl der Knoten ist zu gering.");
+            checkInput();
+        }
         return new int[] {numberOfNodes, numberOfEdges};
     }
 
@@ -60,6 +79,19 @@ public class Initiator
         Scanner sc = new Scanner(System.in);
         String input = sc.next();
         return input;
+    }
+
+    private static void tellASecretTo()
+    {
+        System.out.println(Constants.REQUEST_ID_INPUT);
+        Scanner sc = new Scanner(System.in);
+        String id = sc.next();
+        System.out.println("Wie lautet die Nachricht?");
+        String message = sc.next();
+        //Node.sendMessage(Integer.parseInt(id), message);
+
+        JSONObject wholeMessage = Node.createWholeMessage(Integer.parseInt(id), 0, "tellSecret", message);
+        Node.sendSecret(wholeMessage);
     }
 
     private static void sendMessageTo()
@@ -77,7 +109,9 @@ public class Initiator
         System.out.println(Constants.REQUEST_ID_INPUT);
         Scanner sc = new Scanner(System.in);
         String id = sc.next();
-        Node.sendMessage(Integer.parseInt(id), Constants.STOP_MESSAGE);
+        //Node.sendMessage(Integer.parseInt(id), Constants.STOP_MESSAGE);
+        JSONObject wholeMessage = Node.createWholeMessage(Integer.parseInt(id), 0, Constants.STOP_MESSAGE, "Knoten wurde beendet");
+        Node.sendSecret(wholeMessage);
     }
 
     private static void closeAllNodes()
@@ -85,7 +119,9 @@ public class Initiator
         int[] allIDs = Node.getAllIds();
         for (int i=0; i< allIDs.length; i++)
         {
-            Node.sendMessage(allIDs[i], Constants.STOP_MESSAGE);
+            //Node.sendMessage(allIDs[i], Constants.STOP_MESSAGE);
+            JSONObject wholeMessage = Node.createWholeMessage(allIDs[i], 0, Constants.STOP_MESSAGE, "Knoten wurde beendet");
+            Node.sendSecret(wholeMessage);
         }
     }
 }

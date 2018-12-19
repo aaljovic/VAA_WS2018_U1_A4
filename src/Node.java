@@ -1,3 +1,6 @@
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -15,9 +18,10 @@ public class Node
         if (args.length == 1)
         {
             Node node = read(args[0]);
-            //node.setNeighbours(readForNeighbours(Integer.toString(node.id)));
-            //node.showNeighbours();
-            //node.listenToPort(node.getPort());
+            node.setNeighbours(readForNeighbours(Integer.toString(node.id)));
+            node.showNeighbours();
+            node.listenToPort(node.getPort());
+            System.out.println("Das Gerücht hörte ich " + node.heard + " Mal.");
         }
         else
         {
@@ -29,13 +33,15 @@ public class Node
     private String ipAddress;
     private int port;
     private int[] neighbourNodes;
+    private int heard;
 
-    public Node(int id, String ipAddress, int port, int[] neighbourNodes)
+    public Node(int id, String ipAddress, int port, int[] neighbourNodes, int heard)
     {
         this.id = id;
         this.ipAddress = ipAddress;
         this.port = port;
         this.neighbourNodes = neighbourNodes;
+        this.heard = heard;
     }
 
     protected static int[] readForNeighbours(String inputParameter)
@@ -55,13 +61,13 @@ public class Node
             {
                 idInLine = line.substring(0, line.indexOf(" "));
                 lastWordInLine = line.substring(line.lastIndexOf(" ")+1);
-                lastIdInLine = lastWordInLine.substring(0, (lastWordInLine.length()-1));
+                //lastIdInLine = lastWordInLine.substring(0, (lastWordInLine.length()-1));
                 if (idInLine.equals(inputParameter))
                 {
-                    neighbours[numberOfNeighbours] = Integer.parseInt(lastIdInLine);
+                    neighbours[numberOfNeighbours] = Integer.parseInt(lastWordInLine);
                     numberOfNeighbours++;
                 }
-                else if (lastIdInLine.equals(inputParameter))
+                else if (lastWordInLine.equals(inputParameter))
                 {
                     neighbours[numberOfNeighbours] = Integer.parseInt(idInLine);
                     numberOfNeighbours++;
@@ -120,7 +126,7 @@ public class Node
             System.err.println("Die Eingegebene ID existiert nicht. Nullpointer Exception: " + npe);
         }
         String[] parts = ipAddress.split(":");
-        Node node = new Node(Integer.parseInt(idInLine), parts[0], Integer.parseInt(parts[1]), null);
+        Node node = new Node(Integer.parseInt(idInLine), parts[0], Integer.parseInt(parts[1]), null, 0);
         System.out.println("----> Knoten " + node.id + node.ipAddress + ":" + node.port + " <----");
         return node;
     }
@@ -167,6 +173,18 @@ public class Node
 
     protected String getIpAddress() { return this.ipAddress; }
 
+    protected void showPartOfMessage(JSONObject wholeMessage)
+    {
+        try
+        {
+            System.out.println(Constants.JSON_MESSAGE_START + wholeMessage.getString("timeStamp") + "\t" + wholeMessage.getString("secret") + "\tvon ID: " + wholeMessage.getInt("fromID"));
+        }
+        catch(JSONException jsonE)
+        {
+            System.err.println(Constants.JSON_GENERAL_ERROR + jsonE);
+        }
+    }
+
     protected void listenToPort(int port)
     {
         ServerSocket server = null;
@@ -184,10 +202,10 @@ public class Node
                 InputStreamReader isr = new InputStreamReader(is);
                 BufferedReader br = new BufferedReader(isr);
                 String message = br.readLine();
-                System.out.println(message);
-                // String message includes a timestamp and the actual message. To check if the message contains the command "stop" we split it into two parts: timeStamp and actual message
-                String[] wordsOfMessage = message.split("\\s+");
-                String lastWordOfMessage = wordsOfMessage[wordsOfMessage.length-1];
+                JSONObject wholeMessage = new JSONObject(message);
+                showPartOfMessage(wholeMessage);
+
+                String lastWordOfMessage = wholeMessage.getString("controlMessage");
                 if (lastWordOfMessage.equals(Constants.STOP_MESSAGE))
                 {
                     if (server != null)
@@ -195,15 +213,22 @@ public class Node
                         server.close();
                         socket.close();
                         run = false;
+                        this.heard--;
                     }
                 }
                 else if (firstTime == true)
                 {
-                    this.sendIdToNeighbours();
+                    //this.sendIdToNeighbours();
+                    this.sendSecretToNeighbours(wholeMessage);
                     firstTime = false;
                 }
+                this.heard++;
             }
-        } catch (IOException ioe)
+
+        } catch (JSONException jsonE)
+        {
+            System.err.println(Constants.JSON_GENERAL_ERROR + jsonE);
+        }catch (IOException ioe)
         {
             System.err.println(Constants.INPUT_OUTPUT_ERROR + ioe);
         } finally
@@ -218,6 +243,36 @@ public class Node
             {
                 ex.printStackTrace();
             }
+        }
+    }
+
+    protected static void sendSecret(JSONObject secretMessage)
+    {
+        try
+        {   // @TODO Maybe InetAddress.getLocalHost() instead of "127.0.0.1", or at least Constan localhost
+                Socket clientSocket = new Socket("127.0.0.1", read(Integer.toString(secretMessage.getInt("toID"))).getPort());
+                OutputStream os = clientSocket.getOutputStream();
+                OutputStreamWriter osw = new OutputStreamWriter(os);
+                BufferedWriter bw = new BufferedWriter(osw);
+                bw.write(secretMessage.toString());
+                bw.flush();
+                clientSocket.close();
+        }
+        catch (JSONException jsonE)
+        {
+            System.err.println(Constants.JSON_GENERAL_ERROR + jsonE);
+        }
+        catch(UnknownHostException uhe)
+        {
+            System.err.println("Host ist unbekannt: " + uhe);
+        }
+        catch (SocketException sc)
+        {
+            System.err.println("Knoten ist bereits geschlossen: " + sc);
+        }
+        catch (IOException ioe)
+        {
+            System.err.println(Constants.INPUT_OUTPUT_ERROR + ioe);
         }
     }
 
@@ -257,6 +312,44 @@ public class Node
             this.sendMessage(this.neighbourNodes[i], Integer.toString(this.id));
         }
 
+    }
+
+    protected void sendSecretToNeighbours(JSONObject secretMessage)
+    {
+        for (int i= 0; i<this.neighbourNodes.length; i++)
+        {
+            System.out.println("Nachricht an " + this.neighbourNodes[i]);
+            try
+            {
+                secretMessage = this.createWholeMessage(this.neighbourNodes[i], this.id, secretMessage.getString("controlMessage"), secretMessage.getString("secret"));
+            }
+            catch(JSONException jsonE)
+            {
+                System.err.println(Constants.JSON_GENERAL_ERROR + jsonE);
+            }
+            this.sendSecret(secretMessage);
+        }
+
+    }
+
+    protected static JSONObject createWholeMessage(int toID, int fromID, String controlMessage, String secret)
+    {
+        String timeStamp = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSSSSS").format(new Date());
+        JSONObject wholeMessage = new JSONObject();
+
+        try
+        {
+            wholeMessage.put("toID", toID);
+            wholeMessage.put("fromID", fromID);
+            wholeMessage.put("secret", secret);
+            wholeMessage.put("controlMessage", controlMessage);
+            wholeMessage.put("timeStamp", timeStamp);
+        }
+        catch(JSONException jsonE)
+        {
+            System.err.println(Constants.INPUT_OUTPUT_ERROR + jsonE);
+        }
+        return wholeMessage;
     }
 
     protected void setRandomNeighbours()
