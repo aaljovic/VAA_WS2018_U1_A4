@@ -219,8 +219,8 @@ public class Node
                 else if (firstTime == true)
                 {
                     //this.sendIdToNeighbours();
-                    this.sendSecretToNeighbours(wholeMessage);
                     firstTime = false;
+                    this.sendSecretToNeighbours(wholeMessage);
                 }
                 this.heard++;
             }
@@ -249,14 +249,15 @@ public class Node
     protected static void sendSecret(JSONObject secretMessage)
     {
         try
-        {   // @TODO Maybe InetAddress.getLocalHost() instead of "127.0.0.1", or at least Constan localhost
-                Socket clientSocket = new Socket("127.0.0.1", read(Integer.toString(secretMessage.getInt("toID"))).getPort());
-                OutputStream os = clientSocket.getOutputStream();
-                OutputStreamWriter osw = new OutputStreamWriter(os);
-                BufferedWriter bw = new BufferedWriter(osw);
-                bw.write(secretMessage.toString());
-                bw.flush();
-                clientSocket.close();
+        {
+            // Socket clientSocket = new Socket(read(Integer.toString(id)).getIpAddress(), read(Integer.toString(id)).getPort());
+            Socket clientSocket = new Socket("127.0.0.1", read(Integer.toString(secretMessage.getInt("toID"))).getPort());
+            OutputStream os = clientSocket.getOutputStream();
+            OutputStreamWriter osw = new OutputStreamWriter(os);
+            BufferedWriter bw = new BufferedWriter(osw);
+            bw.write(secretMessage.toString());
+            bw.flush();
+            clientSocket.close();
         }
         catch (JSONException jsonE)
         {
@@ -279,7 +280,8 @@ public class Node
     protected static void sendMessage(int id, String message)
     {
         try
-        {   // @TODO Maybe InetAddress.getLocalHost() instead of "127.0.0.1", or at least Constan localhost
+        {
+            // Socket clientSocket = new Socket(read(Integer.toString(id)).getIpAddress(), read(Integer.toString(id)).getPort());
             Socket clientSocket = new Socket("127.0.0.1", read(Integer.toString(id)).getPort());
             OutputStream os = clientSocket.getOutputStream();
             OutputStreamWriter osw = new OutputStreamWriter(os);
@@ -319,19 +321,28 @@ public class Node
         for (int i= 0; i<this.neighbourNodes.length; i++)
         {
             System.out.println("Nachricht an " + this.neighbourNodes[i]);
+            JSONObject wholeMessage = new JSONObject();
             try
             {
-                secretMessage = this.createWholeMessage(this.neighbourNodes[i], this.id, secretMessage.getString("controlMessage"), secretMessage.getString("secret"));
+                // Avoid that Message is sent back to Node which told us the message
+                if (this.neighbourNodes[i] != secretMessage.getInt("fromID"))
+                {
+                    wholeMessage = this.createWholeMessage(this.neighbourNodes[i], this.id, secretMessage.getString("controlMessage"), secretMessage.getString("secret"));
+                    this.sendSecret(wholeMessage);
+                }
             }
             catch(JSONException jsonE)
             {
                 System.err.println(Constants.JSON_GENERAL_ERROR + jsonE);
             }
-            this.sendSecret(secretMessage);
         }
 
     }
 
+    // @TODO Zwei Nachrichtenformaten.
+    // @TODO Ausgabe besser machen + Zeitangabe
+    // @TODO Eventuell c als Eingabeparametar reinprogrammieren
+    // @TODO EingabeDateien nicht hardcoden sondern als parametar oder in batch file
     protected static JSONObject createWholeMessage(int toID, int fromID, String controlMessage, String secret)
     {
         String timeStamp = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSSSSS").format(new Date());

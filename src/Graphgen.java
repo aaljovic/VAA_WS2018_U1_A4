@@ -94,23 +94,6 @@ public class Graphgen
                 }
             }
         }
-        /*
-        for (int i=0; i<numberOfEdges; i++)
-        {
-            neighbour = Graphgen.getNeighbourForGraph(randomNumber, numberOfNodes);
-            if (!checkNeighbourAlreadyExists(neighbours, neighbour))
-            {
-                neighbours[i] = neighbour;
-                System.out.println(neighbours[i].graphNode + " -- " + neighbours[i].graphNeighbour);
-            }
-            else
-            {
-                System.out.println("Already exist?");
-                //i--;
-            }
-        }
-        */
-        //return neighbours;
     }
 
     protected static void changeGraphFile(int numberOfEdges, Graphgen[] allNeighbours)
